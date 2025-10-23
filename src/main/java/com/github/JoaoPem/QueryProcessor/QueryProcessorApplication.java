@@ -1,5 +1,6 @@
 package com.github.JoaoPem.QueryProcessor;
 
+import com.github.JoaoPem.QueryProcessor.converters.SqlToRelationalAlgebra;
 import com.github.JoaoPem.QueryProcessor.parsers.SqlParser;
 import com.github.JoaoPem.QueryProcessor.schema.Schema;
 import com.github.JoaoPem.QueryProcessor.services.SqlService;
@@ -21,12 +22,13 @@ public class QueryProcessorApplication {
 		// Criar schema
 		Schema schema = new Schema();
 
-		// Injetar schema no validator
-		SqlValidator validator = new SqlValidator(schema);
-
-		// Criar parser e service
+		// Criar parser, validator e conversor de álgebra relacional
 		SqlParser parser = new SqlParser();
-		SqlService service = new SqlService(parser, validator);
+		SqlValidator validator = new SqlValidator(schema);
+		SqlToRelationalAlgebra converter = new SqlToRelationalAlgebra();
+
+		// Criar service com conversão
+		SqlService service = new SqlService(parser, validator, converter);
 
 		// Inicializar UI
 		SwingUtilities.invokeLater(() -> new QueryProcessorUI(service));

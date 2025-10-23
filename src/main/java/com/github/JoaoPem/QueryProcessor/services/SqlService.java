@@ -1,5 +1,6 @@
 package com.github.JoaoPem.QueryProcessor.services;
 
+import com.github.JoaoPem.QueryProcessor.converters.SqlToRelationalAlgebra;
 import lombok.RequiredArgsConstructor;
 import com.github.JoaoPem.QueryProcessor.parsers.SqlParser;
 import com.github.JoaoPem.QueryProcessor.validators.SqlValidator;
@@ -10,17 +11,23 @@ public class SqlService {
 
     private final SqlParser sqlParser;
     private final SqlValidator validator;
+    private final SqlToRelationalAlgebra sqlToRelationalAlgebra; // novo
 
     public Map<String, List<String>> validate(String sql) {
-        Map<String, List<String>> errors = new LinkedHashMap<>();
+        Map<String, List<String>> results = new LinkedHashMap<>();
 
         List<String> syntaxErrors = sqlParser.validateSyntax(sql);
-        if (!syntaxErrors.isEmpty()) errors.put("Syntax Errors", syntaxErrors);
+        if (!syntaxErrors.isEmpty()) results.put("Syntax Errors", syntaxErrors);
 
         List<String> semanticErrors = validator.validateSemantics(sql);
-        if (!semanticErrors.isEmpty()) errors.put("Semantic Errors", semanticErrors);
+        if (!semanticErrors.isEmpty()) results.put("Semantic Errors", semanticErrors);
 
-        return errors.isEmpty() ? Map.of() : errors;
 
+        if (syntaxErrors.isEmpty() && semanticErrors.isEmpty()) {
+            String algebra = sqlToRelationalAlgebra.convert(sql);
+            results.put("Relational Algebra", List.of(algebra));
+        }
+
+        return results.isEmpty() ? Map.of() : results;
     }
 }
