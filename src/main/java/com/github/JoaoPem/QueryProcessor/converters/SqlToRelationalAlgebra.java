@@ -20,7 +20,6 @@ public class SqlToRelationalAlgebra {
 
         StringBuilder algebra = new StringBuilder();
 
-        // Projeção
         algebra.append("π[");
         algebra.append(String.join(", ", selectColumns));
         algebra.append("](");
@@ -37,14 +36,12 @@ public class SqlToRelationalAlgebra {
                 joinExpr = joinExpr + " ⋈ " + tables.get(i) + " ON " + joinClauses.get(i-1);
             }
 
-            // Se houver WHERE
             if (whereClause != null) {
                 algebra.append("σ[").append(whereClause).append("](").append(joinExpr).append(")");
             } else {
                 algebra.append(joinExpr);
             }
         } else {
-            // Apenas uma tabela
             String table = aliasToTable.values().iterator().next();
             if (whereClause != null) {
                 algebra.append("σ[").append(whereClause).append("](").append(table).append(")");
@@ -82,7 +79,7 @@ public class SqlToRelationalAlgebra {
     private List<String> extractJoinConditions(String sql) {
         List<String> joins = new ArrayList<>();
         Pattern pattern = Pattern.compile("JOIN\\s+[A-Z0-9_]+\\s+[A-Z0-9_]+\\s+ON\\s+(.*?)\\s+(JOIN|WHERE|$)", Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(sql + " "); // adiciona espaço para pegar o último join
+        Matcher matcher = pattern.matcher(sql + " ");
         while (matcher.find()) {
             joins.add(matcher.group(1).trim());
         }

@@ -5,7 +5,7 @@ import java.util.*;
 public class SqlParser {
 
     private static final List<String> ALLOWED_KEYWORDS = Arrays.asList(
-            "SELECT", "FROM", "WHERE", "JOIN", "ON", "AND", "OR"
+            "SELECT", "FROM", "WHERE", "JOIN", "ON", "AND"
     );
     private static final List<String> ALLOWED_OPERATORS = Arrays.asList(
             "=", ">", "<", "<=", ">=", "<>", "(", ")", ",", "*"
@@ -17,9 +17,8 @@ public class SqlParser {
         }
 
         String normalizedSQL = sqlInput.replaceAll("\\s+", " ").trim().toUpperCase();
-        normalizedSQL = normalizedSQL.replaceAll(";$", ""); // remove ; final
+        normalizedSQL = normalizedSQL.replaceAll(";$", "");
 
-        // --- separa tokens por espaço, vírgula e parênteses, mantendo pontos dentro do token ---
         String[] tokens = normalizedSQL.split("(?<=\\s)|(?=\\s)|(?=[,()])|(?<=[,()])");
 
         List<String> errors = new ArrayList<>();
@@ -30,7 +29,7 @@ public class SqlParser {
 
             if (!ALLOWED_KEYWORDS.contains(token)
                     && !ALLOWED_OPERATORS.contains(token)
-                    && !token.matches("[A-Z0-9_.]+")) { // permite alias.coluna
+                    && !token.matches("[A-Z0-9_.]+")) {
                 errors.add("Invalid token: " + token);
             }
         }

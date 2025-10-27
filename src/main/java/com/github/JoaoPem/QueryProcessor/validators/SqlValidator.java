@@ -47,7 +47,6 @@ public class SqlValidator {
         return errors.isEmpty() ? Collections.emptyList() : errors;
     }
 
-
     private Map<String, String> extractTableAliases(String sql) {
         Map<String, String> aliasMap = new HashMap<>();
         Pattern pattern = Pattern.compile("(FROM|JOIN)\\s+([A-Z0-9_]+)(?:\\s+([A-Z0-9_]+))?");
@@ -111,7 +110,8 @@ public class SqlValidator {
 
         afterWhere = afterWhere.split("\\b(GROUP|ORDER|LIMIT)\\b")[0].trim();
 
-        String[] parts = afterWhere.split("\\s+(AND|OR)\\s+");
+        // --- Apenas AND é aceito ---
+        String[] parts = afterWhere.split("\\s+AND\\s+");
         for (String part : parts) {
             validateCondition(part.trim(), aliasToTable, errors);
         }
@@ -145,5 +145,4 @@ public class SqlValidator {
             errors.add("Unknown column in WHERE: " + col);
         }
     }
-
 }
